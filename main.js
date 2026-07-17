@@ -42,6 +42,24 @@ brushes.forEach((b) => {
 });
 
 /************************************
+Header fill selectors
+************************************/
+const fillSelectors = document.querySelectorAll(".fill-item");
+
+function unselectFillItem(){
+    fillSelectors.forEach((f) =>{
+        f.classList.remove("fill-selected");
+    });
+}
+
+fillSelectors.forEach((b) =>{
+   b.addEventListener("click", () => {
+        unselectFillItem();
+        b.classList.add("fill-selected");
+   }); 
+});
+
+/************************************
 Footer pointer
 ************************************/
 const position = document.querySelector(".position");

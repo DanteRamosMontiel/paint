@@ -54,6 +54,7 @@ h1{
     border-left: 2px solid grey;
     width: max-content;
     flex-shrink: 0;
+    min-height: 74px;
 }
 
 .color-selector {
@@ -171,12 +172,14 @@ input[type="color"]::-moz-color-swatch {
     transition: all .1s ease-in-out;
 }
 
-.brush:hover{
+.brush:hover,
+.fill-selected:hover{
     background-color: #7986cb;
     cursor: pointer;
 }
 
-.brush-selected {
+.brush-selected,
+.fill-selected {
     background-color: #7986cb;
 }
 
@@ -217,7 +220,8 @@ select[name="line-weight"] {
     width: 140px;
 }
 
-.func {
+.func,
+.fill-item {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -229,7 +233,8 @@ select[name="line-weight"] {
     position: relative;
 }
 
-.func:hover{
+.func:hover,
+.fill-item:hover{
     background-color: #7986cb;
     cursor: pointer;
 }
@@ -249,6 +254,24 @@ select[name="line-weight"] {
     opacity: 0;
     pointer-events: none;
     z-index: 100;
+}
+
+.fill{
+    display: flex;
+    gap: 10px;
+}
+
+.fill-container {
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid grey;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 10px;
+    justify-content: center;
+    align-items: center;
+    min-height: 74px;
+    gap: 10px;
 }
 
 
