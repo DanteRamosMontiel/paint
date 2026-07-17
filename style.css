@@ -102,7 +102,7 @@ input[type="color"]::-moz-color-swatch {
     width: 25px;
     border-radius: 100%;
     border: 1px solid white;
-    transition: all .1s ease-in-out;
+    transition: all .05s;
 }
 
 .color-selected{
@@ -116,7 +116,10 @@ input[type="color"]::-moz-color-swatch {
     cursor: pointer;
 }
 
-.color:active{
+.color:active,
+.brush:active,
+.func:active,
+.fill-item:active{
     transform: scale(0.9);
 }
 
@@ -169,7 +172,7 @@ input[type="color"]::-moz-color-swatch {
     width: 32px;
     height: 32px;
     padding: 5px;
-    transition: all .1s ease-in-out;
+    transition: all .05s;
 }
 
 .brush:hover,
@@ -231,6 +234,7 @@ select[name="line-weight"] {
     padding: 5px;
     transition: all .1s ease-in-out;
     position: relative;
+    transition: all .05s;
 }
 
 .func:hover,
