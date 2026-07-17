@@ -1,14 +1,9 @@
 /************************************
-Document components
-************************************/
-const position = document.querySelector(".position");
-const colors = document.querySelectorAll(".color");
-const colorSelector = document.querySelector(".color-selector");
-const brushes = document.querySelectorAll(".brush");
-
-/************************************
 Header colors
 ************************************/
+const colors = document.querySelectorAll(".color");
+const colorSelector = document.querySelector(".color-selector");
+
 function unselectColor(){
     colors.forEach((c) => {
         c.classList.remove("color-selected");
@@ -31,6 +26,8 @@ colorSelector.addEventListener("click", () => {
 /************************************
 Header brushes
 ************************************/
+const brushes = document.querySelectorAll(".brush");
+
 function unselectBrush(){
     brushes.forEach((b) => {
         b.classList.remove("brush-selected");
@@ -47,8 +44,10 @@ brushes.forEach((b) => {
 /************************************
 Footer pointer
 ************************************/
+const position = document.querySelector(".position");
+
 window.addEventListener("mousemove", (event) => {
-    if (event.target.classList.contains("board")) {
+    if (event.target.classList.contains("canvas")) {
         position.textContent = `${event.clientX}, ${Math.max(0, event.clientY - 90)} px`
     } else {
         position.textContent = `-, - px`

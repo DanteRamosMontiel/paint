@@ -4,6 +4,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 
 /* HTML */
@@ -16,6 +17,14 @@ img {
     width: 85%;
     filter: invert(1);
 }
+
+/* H1 */
+h1{
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-right: 20px;
+}
+
 /* HEADER */
 .header {
     position: fixed;
@@ -25,9 +34,11 @@ img {
     width: 100vw;
     background-color: #212121;
     box-shadow: 0px 12px 32px 1px rgba(0, 0, 0, 0.65);
-    padding: 15px 15px;
-    overflow-x: auto;
+    padding: 8px 15px;
     display: flex;
+    justify-content: start;
+    align-items: center;
+    overflow-y: visible;
 }
 
 .container {
@@ -187,11 +198,68 @@ select[name="line-weight"] {
     font-size: large;
 }
 
+.funcs{
+    display: flex;
+    gap: 10px;
+    max-width: 120px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.container.funcs-container{
+    width: 140px;
+}
+
+.func {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    transition: all .1s ease-in-out;
+    position: relative;
+}
+
+.func:hover{
+    background-color: #7986cb;
+    cursor: pointer;
+}
+
+.func::after {
+    content: attr(data-tooltip);
+    font-family: Arial, Helvetica, sans-serif;
+    position: absolute;
+    left: 180%;
+    transform: translateX(-50%) translateY(-5px);
+    background: black;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+
+/* Mostrar al pasar el mouse */
+.func:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* BOARD */
-.board {
-    background-color: white;
+.canvas{
+    position: absolute;
+    top: 90px;
+    left: 0px;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 120px);
+    background-color: white;
 }
 
 /* FOOTER */
