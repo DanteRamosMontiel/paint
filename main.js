@@ -4,27 +4,44 @@ Document components
 const position = document.querySelector(".position");
 const colors = document.querySelectorAll(".color");
 const colorSelector = document.querySelector(".color-selector");
+const brushes = document.querySelectorAll(".brush");
 
 /************************************
 Header colors
 ************************************/
-function unselect(){
+function unselectColor(){
     colors.forEach((c) => {
-        c.classList.remove("selected");
+        c.classList.remove("color-selected");
     });
-    colorSelector.classList.remove("selected");
+    colorSelector.classList.remove("color-selected");
 }
 
 document.addEventListener("click", (event) => {
     if (event.target.classList.contains("color")) {
-        unselect();
-        event.target.classList.add("selected");
+        unselectColor();
+        event.target.classList.add("color-selected");
     }
 });
 
 colorSelector.addEventListener("click", () => {
-    unselect();
-    colorSelector.classList.add("selected");
+    unselectColor();
+    colorSelector.classList.add("color-selected");
+});
+
+/************************************
+Header brushes
+************************************/
+function unselectBrush(){
+    brushes.forEach((b) => {
+        b.classList.remove("brush-selected");
+    });
+}
+
+brushes.forEach((b) => {
+    b.addEventListener("click", () =>{
+        unselectBrush();
+        b.classList.add("brush-selected");
+    });
 });
 
 /************************************
