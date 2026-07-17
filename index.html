@@ -12,54 +12,54 @@
 <body>
     <div class="header">
         <h1>Homemade Paint!</h1>
-        <div class="container">
+        <div class="container"> 
             <div class="color-selector">
                 <input type="color" value="#dd00fa">
             </div>
             <div class="pallete">
-                <div class="color black color-selected"></div>
-                <div class="color white"></div>
-                <div class="color red"></div>
-                <div class="color green"></div>
-                <div class="color blue"></div>
-                <div class="color yellow"></div>
-                <div class="color orange"></div>
-                <div class="color pink"></div>
+                <div class="color black color-selected" data-color="black"></div>
+                <div class="color white" data-color="white"></div>
+                <div class="color red" data-color="red"></div>
+                <div class="color green" data-color="green"></div>
+                <div class="color blue" data-color="blue"></div>
+                <div class="color yellow" data-color="yellow"></div>
+                <div class="color orange" data-color="orange"></div>
+                <div class="color pink" data-color="pink"></div>
             </div>
         </div>
         <div class="container">
             <div class="weight-selector">
                 <p>Line Weight</p>
                 <select name="line-weight">
-                    <option value="0">12</option>
-                    <option value="1">14</option>
-                    <option value="2">16</option>
-                    <option value="3">18</option>
-                    <option value="4">20</option>
-                    <option value="5">22</option>
-                    <option value="6">24</option>
-                    <option value="7">30</option>
-                    <option value="8">45</option>
-                    <option value="9">72</option>
+                    <option value="1">12</option>
+                    <option value="2">14</option>
+                    <option value="3">16</option>
+                    <option value="4">18</option>
+                    <option value="5">20</option>
+                    <option value="6">22</option>
+                    <option value="7">24</option>
+                    <option value="8">30</option>
+                    <option value="10">45</option>
+                    <option value="20">72</option>
                 </select>
             </div>
             <div class="brushes">
-                <div class="brush brush-selected">
+                <div data-brushtype="circle" class="brush brush-selected">
                     <img src="assets/icons/circle.png" alt="circle">
                 </div>
-                <div class="brush">
+                <div data-brushtype="square" class="brush">
                     <img src="assets/icons/square.png" alt="square">
                 </div>
-                <div class="brush">
+                <div data-brushtype="line" class="brush">
                     <img src="assets/icons/line.png" alt="line">
                 </div>
-                <div class="brush bucket">
+                <div data-brushtype="bucket" class="brush bucket">
                     <img src="assets/icons/bucket.png" alt="bucket">
                 </div>
-                <div class="brush eraser">
+                <div data-brushtype="eraser" class="brush eraser">
                     <img src="assets/icons/eraser.png" alt="eraser">
                 </div>
-                <div class="brush text">
+                <div data-brushtype="text" class="brush text">
                     <img src="assets/icons/text.png" alt="text">
                 </div>
             </div>
@@ -67,11 +67,11 @@
         <div class="fill-container">
             <p>Fill</p>
             <div class="fill">
-                <div class="fill-item fill-selected">
-                    <img src="assets/icons/circle.png" alt="close">
+                <div data-fill="" class="fill-item">
+                    <img src="assets/icons/circle.png" alt="circle">
                 </div>
-                <div class="fill-item">
-                    <img src="assets/icons/sphere.png" alt="save">
+                <div data-fill=" " class="fill-item fill-selected">
+                    <img src="assets/icons/sphere.png" alt="sphere">
                 </div>
             </div>
         </div>

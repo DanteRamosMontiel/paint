@@ -1,10 +1,27 @@
 /************************************
+Global variables
+************************************/
+let canvas = document.querySelector("canvas");
+let ctx = canvas.getContext("2d");
+let color = "black";
+let brush = "circle";
+let weight = 1;
+let fill = true;
+let drawing = false;
+
+/************************************
+Canvas size
+************************************/
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 136;
+
+/************************************
 Header colors
 ************************************/
 const colors = document.querySelectorAll(".color");
 const colorSelector = document.querySelector(".color-selector");
 
-function unselectColor(){
+function unselectColor() {
     colors.forEach((c) => {
         c.classList.remove("color-selected");
     });
@@ -15,6 +32,7 @@ document.addEventListener("click", (event) => {
     if (event.target.classList.contains("color")) {
         unselectColor();
         event.target.classList.add("color-selected");
+        color = event.target.dataset.color;
     }
 });
 
@@ -23,41 +41,117 @@ colorSelector.addEventListener("click", () => {
     colorSelector.classList.add("color-selected");
 });
 
+colorSelector.addEventListener("input", (e) => {
+    color = e.target.value;
+});
+
+/************************************
+Header line weight selector
+************************************/
+const select = document.querySelector("select");
+
+select.addEventListener("change", (e) => {
+    weight = e.target.value;
+});
+
 /************************************
 Header brushes
 ************************************/
 const brushes = document.querySelectorAll(".brush");
 
-function unselectBrush(){
+function unselectBrush() {
     brushes.forEach((b) => {
         b.classList.remove("brush-selected");
     });
 }
 
 brushes.forEach((b) => {
-    b.addEventListener("click", () =>{
+    b.addEventListener("click", () => {
         unselectBrush();
         b.classList.add("brush-selected");
+        brush = b.dataset.brushtype;
     });
 });
+
 
 /************************************
 Header fill selectors
 ************************************/
 const fillSelectors = document.querySelectorAll(".fill-item");
 
-function unselectFillItem(){
-    fillSelectors.forEach((f) =>{
+function unselectFillItem() {
+    fillSelectors.forEach((f) => {
         f.classList.remove("fill-selected");
     });
 }
 
-fillSelectors.forEach((b) =>{
-   b.addEventListener("click", () => {
+fillSelectors.forEach((b) => {
+    b.addEventListener("click", () => {
         unselectFillItem();
         b.classList.add("fill-selected");
-   }); 
+        fill = Boolean(b.dataset.fill);
+    });
 });
+
+/************************************
+Canvas paintzone
+************************************/
+canvas.addEventListener("mousedown", (e) => {drawing = true; draw(e)});
+canvas.addEventListener("mouseup", () => {drawing = false});
+canvas.addEventListener("mouseout", () => {drawing = false});
+canvas.addEventListener("mousemove", (e) => {draw(e)});
+
+function drawCircle(x, y) {
+
+    if (!drawing) return;
+
+    ctx.beginPath();
+    ctx.arc(x, y, weight, 0, Math.PI * 2, false);
+    if(fill){
+        ctx.fillStyle = color;
+        ctx.fill();
+    }else{
+        ctx.strokeStyle = color;
+        ctx.stroke();
+    }
+}
+
+function drawSquare(x, y) {
+
+    if (!drawing) return;
+
+    const side = weight * 10;
+
+    if (fill) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x - side / 2, y - side / 2, side, side);
+    } else {
+        ctx.strokeStyle = color;
+        ctx.strokeRect(x - side / 2, y - side / 2, side, side);
+        ctx.strokeRect(x - side / 2, y - side / 2, side, side);
+    }
+}
+
+function draw(e){
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    e.target.style.cursor = "crosshair";
+
+    switch (brush) {
+        case "circle":
+            drawCircle(x, y);
+            break;
+        case "square":
+            drawSquare(x, y);
+            break;
+        default:
+            break;
+    }
+}
+
+
 
 /************************************
 Footer pointer
@@ -66,7 +160,7 @@ const position = document.querySelector(".position");
 
 window.addEventListener("mousemove", (event) => {
     if (event.target.classList.contains("canvas")) {
-        position.textContent = `${event.clientX}, ${Math.max(0, event.clientY - 90)} px`
+        position.textContent = `${event.clientX}, ${Math.max(0, event.clientY - 106)} px`
     } else {
         position.textContent = `-, - px`
     }
