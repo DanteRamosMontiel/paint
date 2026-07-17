@@ -1,0 +1,165 @@
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* HTML */
+html {
+    background-color: #303030;
+}
+
+/* HEADER */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 90px;
+    width: 100vw;
+    background-color: #212121;
+    box-shadow: 0px 12px 32px 1px rgba(0, 0, 0, 0.65);
+    padding: 15px 15px;
+    overflow-x: auto;
+    display: flex;
+}
+
+.colors {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-left: 10px;
+    border-left: 2px solid grey;
+    width: 222px;
+}
+
+.color-selector {
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.pallete {
+    display: flex;
+    gap: 10px;
+    max-width: 150px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.color {
+    height: 25px;
+    width: 25px;
+    border-radius: 100%;
+    border: 1px solid white;
+    transition: all .1s ease-in-out;
+}
+
+.selected{
+    -webkit-box-shadow: 0px 0px 4px 2px #C2FFFD;
+    box-shadow: 0px 0px 4px 2px #C2FFFD;
+}
+
+.color:hover{
+    -webkit-box-shadow: 0px 0px 4px 2px #C2FFFD;
+    box-shadow: 0px 0px 4px 2px #C2FFFD;
+    cursor: pointer;
+}
+
+.color:active{
+    transform: scale(0.9);
+}
+
+.black {
+    background-color: black;
+}
+
+.white {
+    background-color: white;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.pink {
+    background-color: pink;
+}
+
+/* BOARD */
+.board {
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* FOOTER */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    width: 100vw;
+    background-color: #212121;
+    box-shadow: 0px -12px 32px 1px rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 10px;
+    gap: 10px;
+}
+
+.pointer {
+    filter: invert(1);
+    width: 20px;
+    height: 20px;
+}
+
+.position {
+    color: white;
+    font-family: "Arial";
+    font-size: 15px;
+}
