@@ -256,7 +256,11 @@ let text = "";
 canvas.addEventListener("click", (e) => {
     if (brush != "text") return;
     text = prompt("Write the text: ");
-    if (text != null) draw(e);
+    if (text != null){
+        saveState(); 
+        draw(e);
+    }
+        
 });
 
 function drawText(x, y) {

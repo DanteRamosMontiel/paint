@@ -293,6 +293,7 @@ select[name="line-weight"] {
     left: 0px;
     background-color: white;
     cursor: crosshair;
+    touch-action: none;
     z-index: 1;
 }
 
@@ -303,6 +304,7 @@ select[name="line-weight"] {
     background-color: transparent;
     cursor: crosshair;
     z-index: 2;
+    touch-action: none;
     pointer-events: none;
 }
 
