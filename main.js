@@ -5,6 +5,7 @@ let canvas = document.querySelector(".canvas");
 let previewCanvas = document.querySelector(".preview-canvas");
 let ctx = canvas.getContext("2d");
 let previewCtx = previewCanvas.getContext("2d");
+const header = document.querySelector(".header");
 let color = "black";
 let brush = "circle";
 let weight = 1;
@@ -32,6 +33,25 @@ canvas.height = window.innerHeight - 136;
 
 previewCanvas.width = window.innerWidth;
 previewCanvas.height = window.innerHeight - 136;
+
+window.addEventListener("resize", () => {
+
+    const snapshot = canvas.toDataURL();
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 136;
+
+    previewCanvas.width = window.innerWidth;
+    previewCanvas.height = window.innerHeight - 136;
+
+    const img = new Image();
+    img.src = snapshot;
+    img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+    };
+
+    void header.offsetWidth;
+});
 
 /************************************
 Header colors
@@ -294,7 +314,7 @@ All header functions
 /* Delete button */
 const dlt = document.querySelector('[data-tooltip="Delete"]');
 dlt.addEventListener("click", () => {
-    if (confirm("This will erase your entire drawing. Continue?")){
+    if (confirm("This will erase your entire drawing. Continue?")) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         redoStack = [];
         undoStack = [];
