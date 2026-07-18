@@ -291,6 +291,18 @@ select[name="line-weight"] {
     top: 106px;
     left: 0px;
     background-color: white;
+    cursor: crosshair;
+    z-index: 1;
+}
+
+.preview-canvas{
+    position: absolute;
+    top: 106px;
+    left: 0px;
+    background-color: transparent;
+    cursor: crosshair;
+    z-index: 2;
+    pointer-events: none;
 }
 
 /* FOOTER */

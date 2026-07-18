@@ -1,8 +1,10 @@
 /************************************
 Global variables
 ************************************/
-let canvas = document.querySelector("canvas");
+let canvas = document.querySelector(".canvas");
+let previewCanvas = document.querySelector(".preview-canvas");
 let ctx = canvas.getContext("2d");
+let previewCtx = previewCanvas.getContext("2d");
 let color = "black";
 let brush = "circle";
 let weight = 1;
@@ -14,6 +16,9 @@ Canvas size
 ************************************/
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 136;
+
+previewCanvas.width = window.innerWidth;
+previewCanvas.height = window.innerHeight - 136;
 
 /************************************
 Header colors
@@ -96,17 +101,15 @@ fillSelectors.forEach((b) => {
 /************************************
 Canvas paintzone
 ************************************/
-canvas.addEventListener("mousedown", (e) => {drawing = true; draw(e)});
-canvas.addEventListener("mouseup", () => {drawing = false});
+canvas.addEventListener("mousedown", (e) => {if (brush != "line"){drawing = true; draw(e);}});
+canvas.addEventListener("mouseup", () => {if (brush != "line") drawing = false});
 canvas.addEventListener("mouseout", () => {drawing = false});
-canvas.addEventListener("mousemove", (e) => {draw(e)});
+canvas.addEventListener("mousemove", (e) => {if (brush != "line") draw(e)});
 
 function drawCircle(x, y) {
-
     if (!drawing) return;
-
     ctx.beginPath();
-    ctx.arc(x, y, weight, 0, Math.PI * 2, false);
+    ctx.arc(x, y, weight * 3, 0, Math.PI * 2, false);
     if(fill){
         ctx.fillStyle = color;
         ctx.fill();
@@ -120,8 +123,7 @@ function drawSquare(x, y) {
 
     if (!drawing) return;
 
-    const side = weight * 10;
-
+    const side = weight * 9;
     if (fill) {
         ctx.fillStyle = color;
         ctx.fillRect(x - side / 2, y - side / 2, side, side);
@@ -132,12 +134,57 @@ function drawSquare(x, y) {
     }
 }
 
+let from = undefined;
+canvas.addEventListener("mousedown", (e) => {
+    if(brush === "line"){
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        from = {x:x, y:y};
+        drawing = true;
+    }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+    if(brush === "line"){
+        previewCtx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
+        draw(e);
+    }
+});
+
+canvas.addEventListener("mousemove", (e) => {
+    if(brush === "line" && drawing){
+        const rect = previewCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        previewCtx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
+        previewCtx.beginPath();
+        previewCtx.moveTo(from.x, from.y);
+        previewCtx.lineTo(x,y);
+        previewCtx.strokeStyle = color;
+        previewCtx.lineWidth = weight * 2;
+        previewCtx.stroke();
+    }
+});
+
+function drawLine(x, y){
+    if (!drawing || from === undefined) return;
+
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = weight * 2;
+    ctx.stroke();
+
+    drawing = false;
+    from = undefined;
+}
+
 function draw(e){
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    e.target.style.cursor = "crosshair";
 
     switch (brush) {
         case "circle":
@@ -145,6 +192,9 @@ function draw(e){
             break;
         case "square":
             drawSquare(x, y);
+            break;
+        case "line":
+            drawLine(x, y);
             break;
         default:
             break;
