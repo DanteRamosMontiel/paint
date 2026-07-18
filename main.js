@@ -10,6 +10,19 @@ let brush = "circle";
 let weight = 1;
 let fill = true;
 let drawing = false;
+let lastX = null;
+let lastY = null;
+let undoStack = [];
+let redoStack = [];
+
+/************************************
+Function to save the state of the
+canvas before each change
+************************************/
+function saveState() {
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    redoStack = [];
+}
 
 /************************************
 Canvas size
@@ -102,10 +115,30 @@ fillSelectors.forEach((b) => {
 /************************************
 Canvas paintzone
 ************************************/
-canvas.addEventListener("mousedown", (e) => { if (brush != "line" && brush != "text") { drawing = true; draw(e); } });
-canvas.addEventListener("mouseup", () => { if (brush != "line" && brush != "text") drawing = false });
-canvas.addEventListener("mouseout", () => { drawing = false });
-canvas.addEventListener("mousemove", (e) => { if (brush != "line" && brush != "text") draw(e) });
+canvas.addEventListener("mousedown", (e) => {
+    if (brush != "line" && brush != "text") {
+        saveState();
+        drawing = true;
+        lastX = null;
+        lastY = null;
+        draw(e);
+    }
+});
+canvas.addEventListener("mouseup", () => {
+    if (brush != "line" && brush != "text") {
+        drawing = false;
+        lastX = null;
+        lastY = null;
+    }
+});
+canvas.addEventListener("mouseout", () => {
+    drawing = false;
+    lastX = null;
+    lastY = null;
+});
+canvas.addEventListener("mousemove", (e) => {
+    if (brush != "line" && brush != "text") draw(e)
+});
 
 function drawCircle(x, y) {
     if (!drawing) return;
@@ -140,16 +173,17 @@ function drawEraser(x, y) {
     if (!drawing) return;
 
     const side = weight * 9;
-    
+
     ctx.fillStyle = "white";
     ctx.fillRect(x - side / 2, y - side / 2, side, side);
-    
+
 }
 
 /* Start line drawing logic */
 let from = undefined;
 canvas.addEventListener("mousedown", (e) => {
     if (brush === "line") {
+        saveState();
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -212,6 +246,22 @@ function drawText(x, y) {
 }
 /* Finish text drawing logic */
 
+/* funct to interpolate 2 points and fill all the way between that 2 points (last point and new point)*/
+function interpolateAndDraw(x, y, drawFn, spacing = 4) {
+    if (lastX === null || lastY === null) {
+        drawFn(x, y);
+    } else {
+        const dist = Math.hypot(x - lastX, y - lastY);
+        const steps = Math.max(Math.ceil(dist / spacing), 1);
+        for (let i = 1; i <= steps; i++) {
+            const t = i / steps;
+            drawFn(lastX + (x - lastX) * t, lastY + (y - lastY) * t);
+        }
+    }
+    lastX = x;
+    lastY = y;
+}
+
 function draw(e) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -219,16 +269,16 @@ function draw(e) {
 
     switch (brush) {
         case "circle":
-            drawCircle(x, y);
+            interpolateAndDraw(x, y, drawCircle, Math.max(weight * 1.5, 2));
             break;
         case "square":
-            drawSquare(x, y);
+            interpolateAndDraw(x, y, drawSquare, Math.max(weight * 3, 2));
             break;
         case "line":
             drawLine(x, y);
             break;
         case "eraser":
-            drawEraser(x, y);
+            interpolateAndDraw(x, y, drawEraser, Math.max(weight * 3, 2));
             break;
         case "text":
             drawText(x, y);
@@ -238,7 +288,75 @@ function draw(e) {
     }
 }
 
+/************************************
+All header functions
+************************************/
+/* Delete button */
+const dlt = document.querySelector('[data-tooltip="Delete"]');
+dlt.addEventListener("click", () => {
+    if (confirm("This will erase your entire drawing. Continue?")){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        redoStack = [];
+        undoStack = [];
+    }
+});
 
+/* Save button */
+const save = document.querySelector('[data-tooltip="Save"]')
+function saveCanvas() {
+    const url = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "mi-draw.png"
+    link.click();
+}
+save.addEventListener("click", saveCanvas);
+
+/* Print button */
+
+const pr = document.querySelector('[data-tooltip="Print"]');
+function printCanvas() {
+    const dataURL = canvas.toDataURL("image/png");
+    const win = window.open("");
+
+    const img = win.document.createElement("img");
+    img.src = dataURL;
+    img.style.maxWidth = "100%";
+
+    img.onload = () => {
+        win.focus();
+        win.print();
+    };
+
+    win.document.body.appendChild(img);
+}
+pr.addEventListener("click", printCanvas);
+
+/* Undo button */
+const undobutton = document.querySelector('[data-tooltip="Undo"]');
+function undo() {
+    if (undoStack.length === 0) return;
+
+    redoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+
+    const previousState = undoStack.pop();
+
+    ctx.putImageData(previousState, 0, 0);
+}
+undobutton.addEventListener("click", undo);
+
+/* Redo button */
+const redobutton = document.querySelector('[data-tooltip="Redo"]');
+function redo() {
+    if (redoStack.length === 0) return;
+
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+
+    const nextState = redoStack.pop();
+
+    ctx.putImageData(nextState, 0, 0);
+}
+redobutton.addEventListener("click", redo);
 
 /************************************
 Footer pointer

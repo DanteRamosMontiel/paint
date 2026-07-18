@@ -333,6 +333,10 @@ select[name="line-weight"] {
     font-size: 15px;
 }
 
+.noevent{
+    pointer-events: none;
+}
+
 /* MEDIA QUERY */
 @media (max-width: 768px) {
     h1 {
