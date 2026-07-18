@@ -133,32 +133,59 @@ fillSelectors.forEach((b) => {
 });
 
 /************************************
+Helper: gets x and y of an mouse or touch event as well
+************************************/
+function getEventPos(e) {
+    if (e.touches && e.touches.length > 0) {
+        return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+        return { clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY };
+    }
+    return { clientX: e.clientX, clientY: e.clientY };
+}
+
+/************************************
 Canvas paintzone
 ************************************/
-canvas.addEventListener("mousedown", (e) => {
+function handleDrawStart(e) {
     if (brush != "line" && brush != "text") {
+        e.preventDefault();
         saveState();
         drawing = true;
         lastX = null;
         lastY = null;
         draw(e);
     }
-});
-canvas.addEventListener("mouseup", () => {
+}
+function handleDrawEnd() {
     if (brush != "line" && brush != "text") {
         drawing = false;
         lastX = null;
         lastY = null;
     }
-});
+}
+function handleDrawMove(e) {
+    if (brush != "line" && brush != "text") {
+        e.preventDefault();
+        draw(e);
+    }
+}
+
+canvas.addEventListener("mousedown", handleDrawStart);
+canvas.addEventListener("touchstart", handleDrawStart, { passive: false });
+
+canvas.addEventListener("mouseup", handleDrawEnd);
+canvas.addEventListener("touchend", handleDrawEnd);
+
 canvas.addEventListener("mouseout", () => {
     drawing = false;
     lastX = null;
     lastY = null;
 });
-canvas.addEventListener("mousemove", (e) => {
-    if (brush != "line" && brush != "text") draw(e)
-});
+
+canvas.addEventListener("mousemove", handleDrawMove);
+canvas.addEventListener("touchmove", handleDrawMove, { passive: false });
 
 function drawCircle(x, y) {
     if (!drawing) return;
@@ -201,29 +228,38 @@ function drawEraser(x, y) {
 
 /* Start line drawing logic */
 let from = undefined;
-canvas.addEventListener("mousedown", (e) => {
+
+function handleLineStart(e) {
     if (brush === "line") {
+        e.preventDefault();
         saveState();
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const pos = getEventPos(e);
+        const x = pos.clientX - rect.left;
+        const y = pos.clientY - rect.top;
         from = { x: x, y: y };
         drawing = true;
     }
-});
+}
+canvas.addEventListener("mousedown", handleLineStart);
+canvas.addEventListener("touchstart", handleLineStart, { passive: false });
 
-canvas.addEventListener("mouseup", (e) => {
+function handleLineEnd(e) {
     if (brush === "line") {
         previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         draw(e);
     }
-});
+}
+canvas.addEventListener("mouseup", handleLineEnd);
+canvas.addEventListener("touchend", handleLineEnd);
 
-canvas.addEventListener("mousemove", (e) => {
+function handleLineMove(e) {
     if (brush === "line" && drawing) {
+        e.preventDefault();
         const rect = previewCanvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const pos = getEventPos(e);
+        const x = pos.clientX - rect.left;
+        const y = pos.clientY - rect.top;
         previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         previewCtx.beginPath();
         previewCtx.moveTo(from.x, from.y);
@@ -232,7 +268,9 @@ canvas.addEventListener("mousemove", (e) => {
         previewCtx.lineWidth = weight * 2;
         previewCtx.stroke();
     }
-});
+}
+canvas.addEventListener("mousemove", handleLineMove);
+canvas.addEventListener("touchmove", handleLineMove, { passive: false });
 
 function drawLine(x, y) {
     if (!drawing || from === undefined) return;
@@ -288,8 +326,9 @@ function interpolateAndDraw(x, y, drawFn, spacing = 4) {
 
 function draw(e) {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const pos = getEventPos(e);
+    const x = pos.clientX - rect.left;
+    const y = pos.clientY - rect.top;
 
     switch (brush) {
         case "circle":
