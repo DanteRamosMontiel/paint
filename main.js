@@ -75,6 +75,7 @@ brushes.forEach((b) => {
         unselectBrush();
         b.classList.add("brush-selected");
         brush = b.dataset.brushtype;
+        brush === "text" ? canvas.style.cursor = "text" : canvas.style.cursor = "crosshair";
     });
 });
 
@@ -101,19 +102,19 @@ fillSelectors.forEach((b) => {
 /************************************
 Canvas paintzone
 ************************************/
-canvas.addEventListener("mousedown", (e) => {if (brush != "line"){drawing = true; draw(e);}});
-canvas.addEventListener("mouseup", () => {if (brush != "line") drawing = false});
-canvas.addEventListener("mouseout", () => {drawing = false});
-canvas.addEventListener("mousemove", (e) => {if (brush != "line") draw(e)});
+canvas.addEventListener("mousedown", (e) => { if (brush != "line" && brush != "text") { drawing = true; draw(e); } });
+canvas.addEventListener("mouseup", () => { if (brush != "line" && brush != "text") drawing = false });
+canvas.addEventListener("mouseout", () => { drawing = false });
+canvas.addEventListener("mousemove", (e) => { if (brush != "line" && brush != "text") draw(e) });
 
 function drawCircle(x, y) {
     if (!drawing) return;
     ctx.beginPath();
     ctx.arc(x, y, weight * 3, 0, Math.PI * 2, false);
-    if(fill){
+    if (fill) {
         ctx.fillStyle = color;
         ctx.fill();
-    }else{
+    } else {
         ctx.strokeStyle = color;
         ctx.stroke();
     }
@@ -134,40 +135,52 @@ function drawSquare(x, y) {
     }
 }
 
+function drawEraser(x, y) {
+
+    if (!drawing) return;
+
+    const side = weight * 9;
+    
+    ctx.fillStyle = "white";
+    ctx.fillRect(x - side / 2, y - side / 2, side, side);
+    
+}
+
+/* Start line drawing logic */
 let from = undefined;
 canvas.addEventListener("mousedown", (e) => {
-    if(brush === "line"){
+    if (brush === "line") {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        from = {x:x, y:y};
+        from = { x: x, y: y };
         drawing = true;
     }
 });
 
 canvas.addEventListener("mouseup", (e) => {
-    if(brush === "line"){
-        previewCtx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
+    if (brush === "line") {
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         draw(e);
     }
 });
 
 canvas.addEventListener("mousemove", (e) => {
-    if(brush === "line" && drawing){
+    if (brush === "line" && drawing) {
         const rect = previewCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        previewCtx.clearRect(0,0,previewCanvas.width, previewCanvas.height);
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
         previewCtx.beginPath();
         previewCtx.moveTo(from.x, from.y);
-        previewCtx.lineTo(x,y);
+        previewCtx.lineTo(x, y);
         previewCtx.strokeStyle = color;
         previewCtx.lineWidth = weight * 2;
         previewCtx.stroke();
     }
 });
 
-function drawLine(x, y){
+function drawLine(x, y) {
     if (!drawing || from === undefined) return;
 
     ctx.beginPath();
@@ -180,8 +193,26 @@ function drawLine(x, y){
     drawing = false;
     from = undefined;
 }
+/* Finish line drawing logic */
 
-function draw(e){
+
+/* Start text drawing logic */
+let text = "";
+
+canvas.addEventListener("click", (e) => {
+    if (brush != "text") return;
+    text = prompt("Write the text: ");
+    if (text != null) draw(e);
+});
+
+function drawText(x, y) {
+    ctx.font = `${weight * 12}px Arial`;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+}
+/* Finish text drawing logic */
+
+function draw(e) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -195,6 +226,12 @@ function draw(e){
             break;
         case "line":
             drawLine(x, y);
+            break;
+        case "eraser":
+            drawEraser(x, y);
+            break;
+        case "text":
+            drawText(x, y);
             break;
         default:
             break;
